@@ -38,7 +38,10 @@ public class ChatRoomController {
     @MessageMapping("/register")
     public void userJoin(@Payload ChatMessage chat, SimpMessageHeaderAccessor headerAccessor) {
         log.info("Register Request");
-        headerAccessor.getSessionAttributes().put("user", chat.getSender());
+        String user = chat.getSender();
+        String sessionId = headerAccessor.getSessionId();
+        log.info("Subscriber Start! User:{}, Session:{}", user, sessionId);
+        headerAccessor.getSessionAttributes().put("user", user);
         this.messagingTemplate.convertAndSend(this.topic, chat);
     }
 }
