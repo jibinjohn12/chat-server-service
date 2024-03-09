@@ -2,6 +2,7 @@ package com.backend.chatserver.service;
 
 import com.backend.chatserver.dao.entity.Message;
 import com.backend.chatserver.dao.repository.MessageRepository;
+import com.backend.chatserver.schema.ActionType;
 import com.backend.chatserver.schema.ChatMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,19 @@ public class ChatRoomService {
             msg.setId(message.getId());
         } catch (Exception e) {
             log.error("Failed to save message", e);
+        }
+        return msg;
+    }
+
+    public ChatMessage deleteMessage(ChatMessage msg, String room) {
+        // TODO: Try to batch #no of writes per session.
+        // Redesign to save messages as a batch by generating temporary id
+        try {
+            msg.setType(ActionType.DELETE);
+            this.messageRepository.deleteById(msg.getId());
+            return msg;
+        } catch (Exception e) {
+            log.error("Failed to delete message", e);
         }
         return msg;
     }

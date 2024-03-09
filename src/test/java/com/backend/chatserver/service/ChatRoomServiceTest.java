@@ -13,7 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ChatRoomServiceTest {
@@ -48,6 +48,8 @@ public class ChatRoomServiceTest {
 
         ChatMessage returnedMsg = this.chatRoomService.saveMessage(chat, roomName);
 
+        // Verify repository method was called
+        verify(messageRepository, times(1)).save(any());
         assertEquals(returnedMsg.getId(), message.getId());
     }
 
@@ -68,6 +70,56 @@ public class ChatRoomServiceTest {
                 .build();
         // Mock repository
         when(messageRepository.save(any())).thenThrow(new RuntimeException("Connection Timed Out"));
+
+        ChatMessage returnedMsg = this.chatRoomService.saveMessage(chat, roomName);
+
+        // Verify repository method was called
+        verify(messageRepository, times(1)).save(any());
+        assertNotEquals(returnedMsg.getId(), message.getId());
+    }
+
+    @Test
+    public void deleteMessage_returns_ChatMessage() {
+        String roomName = "Room1";
+
+        ChatMessage chat = new ChatMessage();
+        chat.setContent("Test message");
+        chat.setSender("User");
+        chat.setType(ActionType.DELETE);
+
+        Message message = Message.builder()
+                .sender(chat.getSender())
+                .content(chat.getContent())
+                .room(roomName)
+                .id(1L)
+                .build();
+        // Mock repository
+        doNothing().when(messageRepository).deleteById(any());
+
+        ChatMessage returnedMsg = this.chatRoomService.deleteMessage(chat, roomName);
+
+        // Verify repository method was called
+        verify(messageRepository, times(1)).deleteById(any());
+        assertEquals(returnedMsg.getId(), message.getId());
+    }
+
+    @Test
+    public void deleteMessage_handlesException() {
+        String roomName = "Room1";
+
+        ChatMessage chat = new ChatMessage();
+        chat.setContent("Test message");
+        chat.setSender("User");
+        chat.setType(ActionType.DELETE);
+
+        Message message = Message.builder()
+                .sender(chat.getSender())
+                .content(chat.getContent())
+                .room(roomName)
+                .id(1L)
+                .build();
+        // Mock repository
+        doThrow(new RuntimeException()).when(messageRepository).deleteById(any());
 
         ChatMessage returnedMsg = this.chatRoomService.saveMessage(chat, roomName);
 

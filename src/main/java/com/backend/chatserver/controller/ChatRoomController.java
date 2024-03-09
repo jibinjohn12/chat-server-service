@@ -1,5 +1,6 @@
 package com.backend.chatserver.controller;
 
+import com.backend.chatserver.schema.ActionType;
 import com.backend.chatserver.schema.ChatMessage;
 import com.backend.chatserver.service.ChatRoomService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +31,12 @@ public class ChatRoomController {
     @MessageMapping("/send")
     public boolean sendMessage(@Payload ChatMessage chat) {
         log.info("Message Request");
-        chat = chatRomService.saveMessage(chat, this.topic);
+        if (ActionType.CHAT.equals(chat.getType())) {
+            chat = chatRomService.saveMessage(chat, this.topic);
+        } else if (ActionType.DELETE.equals(chat.getType())) {
+            chat = chatRomService.deleteMessage(chat, this.topic);
+        }
+
         this.messagingTemplate.convertAndSend(this.topic, chat);
         return true;
     }

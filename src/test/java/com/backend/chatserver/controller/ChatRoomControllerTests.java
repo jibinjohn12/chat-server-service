@@ -30,7 +30,7 @@ public class ChatRoomControllerTests {
     }
 
     @Test
-    public void testSendMessage() {
+    public void testSendMessage_send_returns_success() {
         // Mock data
         ChatMessage chat = new ChatMessage();
         chat.setContent("Test message");
@@ -44,8 +44,29 @@ public class ChatRoomControllerTests {
         // Call controller method
         boolean success = chatRoomController.sendMessage(chat);
 
-        // Verify repository method was called
+        // Verify service method was called
         verify(chatRomService, times(1)).saveMessage(any(), any());
+
+        // Verify result
+        assertEquals(success, true);
+    }
+
+    @Test
+    public void testSendMessage_delete_returns_success() {
+        // Mock data
+        ChatMessage chat = new ChatMessage();
+        chat.setContent("Test message");
+        chat.setSender("User");
+        chat.setType(ActionType.DELETE);
+
+        // Mock service behavior
+        when(chatRomService.deleteMessage(any(), any())).thenReturn(chat);
+
+        // Call controller method
+        boolean success = chatRoomController.sendMessage(chat);
+
+        // Verify service method was called
+        verify(chatRomService, times(1)).deleteMessage(any(), any());
 
         // Verify result
         assertEquals(success, true);
