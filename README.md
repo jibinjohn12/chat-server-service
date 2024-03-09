@@ -18,15 +18,20 @@ The project uses in memory brokers for handling channel messages and MySQL as da
 - Persists the messages in database table
 - Websocket authentication to prevent unauthorized access
 
-## Startup
+## Setting up
+- Clone the project 
+- Open it on IDE and build the project using gradle build task
 - Make sure a mysql database service is running with root/root as credentials on port 3306.
-  - If not update the connection string and credentials in the application.properties accordingly
-  - spring.jpa.generate-ddl is set to true, to create tables at startup
-- Application runs on port 8080
+  - If not, update the connection string and credentials in the ```application.properties``` accordingly
+  - ```spring.jpa.generate-ddl``` is set to true, to create tables at startup
+
+## Startup
+- Directly run the ```ChatServerApplication.java``` file or run gradle ```:bootRun``` task
+- Application runs on port 8080, if ```server.port``` property not changed
 - websocket URL: [ws://\<host\>:\<port\>/websocket](ws://localhost:8080/websocket)
 - A [web page](http://localhost:8080/?index.html) is available to simulate the chat application
 - Refer [section](#Technology) above for credentials
-
+- Start sending messages or delete a message in the chat
 
 ### Code Structure
 ```
