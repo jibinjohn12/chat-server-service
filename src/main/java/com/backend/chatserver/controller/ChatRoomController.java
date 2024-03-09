@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
@@ -29,10 +28,11 @@ public class ChatRoomController {
     }
 
     @MessageMapping("/send")
-    public void sendMessage(@Payload ChatMessage chat) {
+    public boolean sendMessage(@Payload ChatMessage chat) {
         log.info("Message Request");
         chat = chatRomService.saveMessage(chat, this.topic);
         this.messagingTemplate.convertAndSend(this.topic, chat);
+        return true;
     }
 
     @MessageMapping("/register")
